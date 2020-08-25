@@ -1,18 +1,47 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div class="list">
+    <p>{{ bookCount }}件の読書情報が記録されています。</p>
+    <BookInfo
+      v-for="(b, i) of books"
+      :linkable="true"
+      :book="b"
+      :index="i + 1"
+      :key="b.isbn"
+    ></BookInfo>
+    <div>
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="bookCount"
+        :page-size="3"
+        @current-change="onchange"
+      ></el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import { mapGetters } from "vuex";
+import BookInfo from "@/components/BookInfo.vue";
 
 export default {
-  name: "Home",
+  name: "home",
+  data() {
+    return {
+      books: []
+    };
+  },
   components: {
-    HelloWorld
+    BookInfo
+  },
+  computed: mapGetters(["bookCount", "getRangeByPage"]),
+  methods: {
+    onchange(page) {
+      this.books = this.getRangeByPage(page);
+    }
+  },
+  mounted() {
+    this.books = this.getRangeByPage(1);
   }
 };
 </script>
